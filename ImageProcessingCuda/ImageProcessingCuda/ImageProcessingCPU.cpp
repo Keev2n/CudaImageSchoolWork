@@ -40,8 +40,11 @@ int main() {
 		cout << "Height:" << img.rows << ", Width: " << img.cols << ", Channels: " << img.channels() << endl;
 	}
 
-	image_toGrayScale_Cuda(img.data, img.rows, img.cols, img.channels());
+	image_toGrayScale_Cuda(img.data, img.rows, img.cols, img.channels(), grayImage.data);
+	// cout << "Height:" << grayImage.rows << ", Width: " << grayImage.cols << ", Channels: " << grayImage.channels() << endl;
+	//Teszt(img, grayImage);
 
-	imwrite("Inverted_Image.png", img);
+
+	imwrite("GraySclae_IMG.png", grayImage);
 	system("pause");
 }
