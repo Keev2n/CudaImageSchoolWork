@@ -1,1 +1,1 @@
-void image_toGrayScale_Cuda(unsigned char* Image, int Height, int Width, int Channels);
+void image_toGrayScale_Cuda(unsigned char* Image, int Row, int Col, int Channels, unsigned char* Image2);
