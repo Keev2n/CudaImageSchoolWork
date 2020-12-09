@@ -80,6 +80,64 @@ void Teszt2(Mat grayImage, Mat gaussianFilter){
 	waitKey(0);
 }
 
+void SobelEdge(unsigned char* gaussImage, unsigned char* sobelEdgeImage, int Col, int Row) {
+	for (int x = 0; x < Col; x++) {
+		int lastRowPosition = Col * (Row - 1) + x;
+		sobelEdgeImage[x] = 0;
+		sobelEdgeImage[lastRowPosition] = 0;
+	}
+
+	for (int y = 0; y < Row; y++) {
+		int firstCol = y * Col;
+		int lastCol = firstCol + Col - 1;
+		sobelEdgeImage[firstCol] = 0;
+		sobelEdgeImage[lastCol] = 0;
+	}
+
+	for (int x = 1; x < Col - 1; x++) {
+		for (int y = 1; y < Row - 1; y++) {
+			int currentPixelPosition = y * Col + x;
+			int currentLeftPixelPosition = currentPixelPosition - 1;
+			int currentRightPixelPoisiton = currentPixelPosition + 1;
+			int upperPosition = currentPixelPosition - Col;
+			int upperPositionleft = upperPosition - 1;
+			int upperPositionRight = upperPosition + 1;
+			int lowerPosition = currentPixelPosition + Col;
+			int lowerPositonLeft = lowerPosition - 1;
+			int lowerPositionRight = lowerPosition + 1;
+
+			unsigned char current = gaussImage[currentPixelPosition];
+			unsigned char currentLeft = gaussImage[currentLeftPixelPosition];
+			unsigned char currentRight = gaussImage[currentRightPixelPoisiton];
+			unsigned char currentUpper = gaussImage[upperPosition];
+			unsigned char currentUpperLeft = gaussImage[upperPositionleft];
+			unsigned char currentUpperRight = gaussImage[upperPositionRight];
+			unsigned char currentLower = gaussImage[lowerPosition];
+			unsigned char currentLowerLeft = gaussImage[lowerPositonLeft];
+			unsigned char currentLowerRight = gaussImage[lowerPositionRight];
+
+			int GY = (currentUpper * -2) + (currentUpperLeft * -1) + (currentUpperRight * -1)
+				+ (currentLower * 2) + currentLowerLeft + currentLowerRight;
+
+			int GX = (currentLeft * -2) + (currentRight * 2) + (currentUpperLeft * -1)
+				+ (currentUpperRight)+(currentLowerLeft * -1) + (currentLowerRight);
+
+			GX = abs(GX);
+			GY = abs(GY);
+			int G = GX * GX + GY * GY;
+			G = sqrt(G);
+
+			if (G >= 50) {
+				sobelEdgeImage[currentPixelPosition] = 100;
+			}
+			else {
+				sobelEdgeImage[currentPixelPosition] = 0;
+			}
+
+		}
+	}
+}
+
 int main() {
 	Mat img = imread("test7.png");
 	Mat grayImage(img.rows, img.cols, CV_8UC1);
