@@ -203,24 +203,29 @@ void dummyDataTest() {
 }
 
 int main() {
-	Mat img = imread("test7.png");
-	Mat grayImage(img.rows, img.cols, CV_8UC1);
-	Mat gaussianFilter(img.rows, img.cols, CV_8UC1);
+	Mat rgbImage = imread("test.png");
+	Mat grayImage(rgbImage.rows, rgbImage.cols, CV_8UC1);
+	Mat gaussianFilterImage(rgbImage.rows, rgbImage.cols, CV_8UC1);
+	Mat sobelEdgeFilteredImage(rgbImage.rows, rgbImage.cols, CV_8UC1);
 
-	if (img.empty()) {
+	if (rgbImage.empty()) {
 		std::cout << "Could not read the image: " << endl;
 		return 1;
 	}
 	else {
-		cout << "Height:" << img.rows << ", Width: " << img.cols << ", Channels: " << img.channels() << endl;
+		cout << "Height:" << rgbImage.rows << ", Width: " << rgbImage.cols << ", Channels: " << rgbImage.channels() << endl;
+
+		//rgb2GRAYbasic(rgbImage.data, grayImage.data, rgbImage.cols, rgbImage.rows, rgbImage.channels());
+		//gaussianBlur(grayImage.data, gaussianFilterImage.data, grayImage.cols, grayImage.rows);
+		//SobelEdge(gaussianFilterImage.data, sobelEdgeFilteredImage.data, gaussianFilterImage.cols, gaussianFilterImage.rows);
+		imageProcessingCUDA(rgbImage.data, rgbImage.rows, rgbImage.cols, rgbImage.channels(), grayImage.data, gaussianFilterImage.data, sobelEdgeFilteredImage.data);
+		//cout << "Height:" << grayImage.rows << ", Width: " << grayImage.cols << ", Channels: " << grayImage.channels() << endl;
 	}
+	//dummyDataTest();
 
-	//image_toGrayScale_Cuda(img.data, img.rows, img.cols, img.channels(), grayImage.data);
-	// cout << "Height:" << grayImage.rows << ", Width: " << grayImage.cols << ", Channels: " << grayImage.channels() << endl;
-	Teszt(img, grayImage);
-	Teszt2(grayImage, gaussianFilter);
-
-
-	imwrite("GraySclae_IMG.png", grayImage);
+	writeToFile(sobelEdgeFilteredImage);
+	imwrite("GrayScale.png", grayImage);
+	imwrite("gaussanFiltered_IMG.png", gaussianFilterImage);
+	imwrite("sobelEdge.png", sobelEdgeFilteredImage);
 	system("pause");
 }
