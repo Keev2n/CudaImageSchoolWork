@@ -217,20 +217,9 @@ int main() {
 	}
 	else {
 		cout << "Height:" << rgbImage.rows << ", Width: " << rgbImage.cols << ", Channels: " << rgbImage.channels() << endl;
-
-		auto ossz = 0;
-		for (int i = 0; i < 10; i++)
-		{
-			auto begin = std::chrono::high_resolution_clock::now();
-			rgb2GRAYbasic(rgbImage.data, grayImage.data, rgbImage.cols, rgbImage.rows, rgbImage.channels());
-			gaussianBlur(grayImage.data, gaussianFilterImage.data, grayImage.cols, grayImage.rows);
-			SobelEdge(gaussianFilterImage.data, sobelEdgeFilteredImage.data, gaussianFilterImage.cols, gaussianFilterImage.rows);
-			auto end = std::chrono::high_resolution_clock::now();
-			auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
-			ossz = ossz + elapsed;
-			std::cout << "Elapsed time: " << elapsed << "milliseonds" << std::endl;
-		}
-		std::cout << (ossz / 10) << std::endl;
+		//rgb2GRAYbasic(rgbImage.data, grayImage.data, rgbImage.cols, rgbImage.rows, rgbImage.channels());
+		//gaussianBlur(grayImage.data, gaussianFilterImage.data, grayImage.cols, grayImage.rows);
+		//SobelEdge(gaussianFilterImage.data, sobelEdgeFilteredImage.data, gaussianFilterImage.cols, gaussianFilterImage.rows);
 		//imageProcessingCUDA(rgbImage.data, rgbImage.rows, rgbImage.cols, rgbImage.channels(), grayImage.data, gaussianFilterImage.data, sobelEdgeFilteredImage.data);
 		//cout << "Height:" << grayImage.rows << ", Width: " << grayImage.cols << ", Channels: " << grayImage.channels() << endl;
 	}
