@@ -10,21 +10,23 @@ using namespace std;
 using namespace cv;
 
 void rgb2GRAYbasic(unsigned char* rgbImage, unsigned char* grayImage, int Col, int Row, int Channels) {
-	int width = img.cols;
-	int height = img.rows;
-	int channels = img.channels();
+	//auto begin = std::chrono::high_resolution_clock::now();
 
-	for (int x = 0; x < width; x++){
-		for (int y = 0; y < height; y++){
-			int grayOffset = width * y + x;
-			int rgbOffset = channels * grayOffset;
-			uchar b = img.data[rgbOffset];
-			uchar g = img.data[rgbOffset + 1];
-			uchar r = img.data[rgbOffset + 2];
+	for (int x = 0; x < Col; x++) {
+		for (int y = 0; y < Row; y++) {
+			int grayOffset = Col * y + x;
+			int rgbOffset = Channels * grayOffset;
+			unsigned char b = rgbImage[rgbOffset];
+			unsigned char g = rgbImage[rgbOffset + 1];
+			unsigned char r = rgbImage[rgbOffset + 2];
 
-			grayImage.data[grayOffset] = 0.21f * r + 0.71f * g + 0.07f * b;
 		}
 	}
+
+	//auto end = std::chrono::high_resolution_clock::now();
+	//auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+
+	//std::cout << "Elapsed time: " << elapsed << "milliseonds" << std::endl;
 }
 
 void Teszt2(Mat grayImage, Mat gaussianFilter){
