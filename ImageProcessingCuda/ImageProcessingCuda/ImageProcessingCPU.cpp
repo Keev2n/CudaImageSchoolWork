@@ -31,27 +31,33 @@ void rgb2GRAYbasic(unsigned char* rgbImage, unsigned char* grayImage, int Col, i
 }
 
 void gaussianBlur(unsigned char* grayImage, unsigned char* gaussianBlurImage, int Col, int Row){
-	for (int x = 1; x < (grayImage.cols - 1); x++){
-		for (int y = 1; y < (grayImage.rows - 1); y++){
-			int balfelsoertek = grayImage.at<uchar>(y - 1, x - 1);
-			int kozepsofelso = grayImage.at<uchar>(y - 1, x) * 2;
-			int jobbfelso = grayImage.at<uchar>(y - 1, x + 1);
-			int balkozepso = grayImage.at<uchar>(y, x - 1) * 2;
-			int jobbkozepso = grayImage.at<uchar>(y, x + 1) * 2;
-			int balalso = grayImage.at<uchar>(y + 1, x - 1);
-			int kozepsoalso = grayImage.at<uchar>(y + 1, x) * 2;
-			int jobbalso = grayImage.at<uchar>(y + 1, x + 1);
-			int jelenlegipixel = grayImage.at<uchar>(y, x) * 4;
+	for (int x = 1; x < Col - 1; x++) {
+		for (int y = 1; y < Row - 1; y++) {
+			int currentPixelPosition = y * Col + x;
+			int currentLeftPixelPosition = currentPixelPosition - 1;
+			int currentRightPixelPoisiton = currentPixelPosition + 1;
+			int upperPosition = currentPixelPosition - Col;
+			int upperPositionleft = upperPosition - 1;
+			int upperPositionRight = upperPosition + 1;
+			int lowerPosition = currentPixelPosition + Col;
+			int lowerPositonLeft = lowerPosition - 1;
+			int lowerPositionRight = lowerPosition + 1;
 
-			gaussianFilter.at<uchar>(y, x) = (jelenlegipixel + balfelsoertek + kozepsofelso + jobbfelso + balkozepso + jobbkozepso + balalso +
-				kozepsoalso + jobbalso) / 16;
+			unsigned char current = grayImage[currentPixelPosition];
+			unsigned char currentLeft = grayImage[currentLeftPixelPosition];
+			unsigned char currentRight = grayImage[currentRightPixelPoisiton];
+			unsigned char currentUpper = grayImage[upperPosition];
+			unsigned char currentUpperLeft = grayImage[upperPositionleft];
+			unsigned char currentUpperRight = grayImage[upperPositionRight];
+			unsigned char currentLower = grayImage[lowerPosition];
+			unsigned char currentLowerLeft = grayImage[lowerPositonLeft];
+			unsigned char currentLowerRight = grayImage[lowerPositionRight];
+
+			unsigned char result = (current * 4 + currentLeft * 2 + currentRight * 2 + currentUpper * 2 + currentUpperLeft
+				+ currentUpperRight + currentLower * 2 + currentLowerLeft + currentLowerRight) / 16;
+			gaussianBlurImage[currentPixelPosition] = result;
 		}
 	}
-
-	imshow("Original", grayImage);
-	imshow("GaussianFilter", gaussianFilter);
-
-	waitKey(0);
 }
 
 void SobelEdge(unsigned char* gaussImage, unsigned char* sobelEdgeImage, int Col, int Row) {
