@@ -9,6 +9,7 @@
 using namespace std;
 
 __global__ void ImageToGrayScale_CUDA(unsigned char* RGBimage, int Row, int Col, int Channels, unsigned char* GrayImage);
+__global__ void GaussianFilter_CUDA(unsigned char* GrayImage, int Row, int Col, unsigned char* GaussFilteredImage);
 
 void image_toGrayScale_Cuda(unsigned char* Image, int Row, int Col, int Channels, unsigned char* Image2) {
 	unsigned char* dev_Image = NULL;
@@ -50,4 +51,43 @@ __global__ void ImageToGrayScale_CUDA(unsigned char* Image, int Row, int Col, in
 
 		Image2[grayOffset] = 0.21f * r + 0.71f * g + 0.07f * b;
 	}
+}
+
+__global__ void GaussianFilter_CUDA(unsigned char* GrayImage, int Row, int Col, unsigned char* GaussFilteredImage) {
+	int x = threadIdx.x + blockIdx.x * blockDim.x;
+	int y = threadIdx.y + blockIdx.y * blockDim.y;
+
+	if (x > (Col - 1) || y > (Row - 1)) {
+		return;
+	}
+
+	if (x == 0 || y == 0 || x == (Col - 1) || y == (Row - 1)) {
+		int currentPixelPosition = y * Col + x;
+		GaussFilteredImage[currentPixelPosition] = GrayImage[currentPixelPosition];
+		return;
+	}
+
+	int currentPixelPosition = y * Col + x;
+	int currentLeftPixelPosition = currentPixelPosition - 1;
+	int currentRightPixelPoisiton = currentPixelPosition + 1;
+	int upperPosition = currentPixelPosition - Col;
+	int upperPositionleft = upperPosition - 1;
+	int upperPositionRight = upperPosition + 1;
+	int lowerPosition = currentPixelPosition + Col;
+	int lowerPositonLeft = lowerPosition - 1;
+	int lowerPositionRight = lowerPosition + 1;
+
+	unsigned char current = GrayImage[currentPixelPosition];
+	unsigned char currentLeft = GrayImage[currentLeftPixelPosition];
+	unsigned char currentRight = GrayImage[currentRightPixelPoisiton];
+	unsigned char currentUpper = GrayImage[upperPosition];
+	unsigned char currentUpperLeft = GrayImage[upperPositionleft];
+	unsigned char currentUpperRight = GrayImage[upperPositionRight];
+	unsigned char currentLower = GrayImage[lowerPosition];
+	unsigned char currentLowerLeft = GrayImage[lowerPositonLeft];
+	unsigned char currentLowerRight = GrayImage[lowerPositionRight];
+
+	unsigned char result = (current * 4 + currentLeft * 2 + currentRight * 2 + currentUpper * 2 + currentUpperLeft
+		+ currentUpperRight + currentLower * 2 + currentLowerLeft + currentLowerRight) / 16;
+	GaussFilteredImage[currentPixelPosition] = result;
 }
