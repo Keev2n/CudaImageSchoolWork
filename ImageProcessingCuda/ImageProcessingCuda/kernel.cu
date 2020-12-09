@@ -16,9 +16,13 @@ __global__ void SobelEdge_CUDA(unsigned char* gaussImage, unsigned char* sobelEd
 void imageProcessingCUDA(unsigned char* Image, int Row, int Col, int Channels, unsigned char* Image2) {
 	unsigned char* dev_Image = NULL;
 	unsigned char* dev_Image2 = NULL;
+	unsigned char* dev_Image3 = NULL;
+	unsigned char* dev_Image4 = NULL;
 
 	cudaMalloc((void**)&dev_Image, Row * Col * Channels);
 	cudaMalloc((void**)&dev_Image2, Row * Col);
+	cudaMalloc((void**)&dev_Image3, Row * Col);
+	cudaMalloc((void**)&dev_Image4, Row * Col);
 
 	cudaMemcpy(dev_Image, Image, Row * Col * Channels, cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_Image2, Image2, Row * Col, cudaMemcpyHostToDevice);
