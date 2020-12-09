@@ -30,36 +30,7 @@ void rgb2GRAYbasic(unsigned char* rgbImage, unsigned char* grayImage, int Col, i
 	//std::cout << "Elapsed time: " << elapsed << "milliseonds" << std::endl;
 }
 
-void Teszt2(Mat grayImage, Mat gaussianFilter){
-	/*int pixelertekMegvaltoztatando = grayImage.at<uchar>(1, 1) * 4;
-	int balfelsoertek = grayImage.at<uchar>(0, 0);
-	int kozepsofelso = grayImage.at<uchar>(0, 1) * 2;
-	int jobbfelso = grayImage.at<uchar>(0, 2);
-	int balkozepso = grayImage.at<uchar>(1, 0) * 2;
-	int jobbkozepso = grayImage.at<uchar>(1, 2) * 2;
-	int balalso = grayImage.at<uchar>(2, 0);
-	int kozepsoalso = grayImage.at<uchar>(2, 1) * 2;
-	int jobbalso = grayImage.at<uchar>(2, 3);
-
-	for (int x = 0; x < 3; x++){
-		for (int y = 0; y < 3; y++){
-			int pixel = grayImage.at<uchar>(x, y);
-			cout << pixel << " ";
-		}
-		cout << "\n";
-	}
-
-	int kozepsopixel = (pixelertekMegvaltoztatando + balfelsoertek + kozepsofelso + jobbfelso + balkozepso + jobbkozepso + balalso +
-		kozepsoalso + jobbalso) / 16;
-
-	cout << kozepsopixel;
-	*/
-	/*for (int i = 0; i < grayImage.rows; i++){
-		for (int y = 0; y < 20; y++){
-			gaussianFilter.at<uchar>(i, y) = grayImage.at<uchar>(i, y);
-		}
-	}
-	*/
+void gaussianBlur(Mat grayImage, Mat gaussianFilter){
 	for (int x = 1; x < (grayImage.cols - 1); x++){
 		for (int y = 1; y < (grayImage.rows - 1); y++){
 			int balfelsoertek = grayImage.at<uchar>(y - 1, x - 1);
