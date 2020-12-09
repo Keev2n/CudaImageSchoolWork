@@ -8,7 +8,7 @@
 
 using namespace std;
 
-__global__ void ImageToGrayScale_CUDA(unsigned char* Image, int Row, int Col, int Channels, unsigned char* Image2);
+__global__ void ImageToGrayScale_CUDA(unsigned char* RGBimage, int Row, int Col, int Channels, unsigned char* GrayImage);
 
 void image_toGrayScale_Cuda(unsigned char* Image, int Row, int Col, int Channels, unsigned char* Image2) {
 	unsigned char* dev_Image = NULL;
