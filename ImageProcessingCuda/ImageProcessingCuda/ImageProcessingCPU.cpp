@@ -20,6 +20,7 @@ void rgb2GRAYbasic(unsigned char* rgbImage, unsigned char* grayImage, int Col, i
 			unsigned char g = rgbImage[rgbOffset + 1];
 			unsigned char r = rgbImage[rgbOffset + 2];
 
+			grayImage[grayOffset] = 0.299f * r + 0.587f * g + 0.114f * b;
 		}
 	}
 
