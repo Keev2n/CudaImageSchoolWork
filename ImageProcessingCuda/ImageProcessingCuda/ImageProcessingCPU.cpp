@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -135,6 +136,18 @@ void SobelEdge(unsigned char* gaussImage, unsigned char* sobelEdgeImage, int Col
 
 		}
 	}
+}
+
+void writeToFile(Mat Img) {
+	ofstream myfile("Image.xls");
+	for (int y = 0; y < Img.rows; y++) {
+		for (int x = 0; x < Img.cols; x++) {
+			int number = Img.at<uchar>(y, x);
+			myfile << number << "\t";
+		}
+		myfile << "\n";
+	}
+	myfile.close();
 }
 
 int main() {
