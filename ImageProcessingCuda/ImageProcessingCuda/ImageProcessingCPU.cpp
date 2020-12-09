@@ -31,6 +31,20 @@ void rgb2GRAYbasic(unsigned char* rgbImage, unsigned char* grayImage, int Col, i
 }
 
 void gaussianBlur(unsigned char* grayImage, unsigned char* gaussianBlurImage, int Col, int Row){
+	//auto begin = std::chrono::high_resolution_clock::now();
+	for (int x = 0; x < Col; x++) {
+		int lastRowPosition = Col * (Row - 1) + x;
+		gaussianBlurImage[x] = grayImage[x];
+		gaussianBlurImage[lastRowPosition] = grayImage[lastRowPosition];
+	}
+
+	for (int y = 0; y < Row; y++) {
+		int firstCol = y * Col;
+		int lastCol = firstCol + Col - 1;
+		gaussianBlurImage[firstCol] = grayImage[firstCol];
+		gaussianBlurImage[lastCol] = grayImage[lastCol];
+	}
+	
 	for (int x = 1; x < Col - 1; x++) {
 		for (int y = 1; y < Row - 1; y++) {
 			int currentPixelPosition = y * Col + x;
@@ -58,6 +72,11 @@ void gaussianBlur(unsigned char* grayImage, unsigned char* gaussianBlurImage, in
 			gaussianBlurImage[currentPixelPosition] = result;
 		}
 	}
+
+	//auto end = std::chrono::high_resolution_clock::now();
+	//auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+
+	//std::cout << "Elapsed time: " << elapsed << "milliseonds" << std::endl;
 }
 
 void SobelEdge(unsigned char* gaussImage, unsigned char* sobelEdgeImage, int Col, int Row) {
