@@ -81,6 +81,7 @@ void gaussianBlur(unsigned char* grayImage, unsigned char* gaussianBlurImage, in
 }
 
 void SobelEdge(unsigned char* gaussImage, unsigned char* sobelEdgeImage, int Col, int Row) {
+	//auto begin = std::chrono::high_resolution_clock::now();
 	for (int x = 0; x < Col; x++) {
 		int lastRowPosition = Col * (Row - 1) + x;
 		sobelEdgeImage[x] = 0;
@@ -122,13 +123,10 @@ void SobelEdge(unsigned char* gaussImage, unsigned char* sobelEdgeImage, int Col
 			int GX = (currentLeft * -2) + (currentRight * 2) + (currentUpperLeft * -1)
 				+ (currentUpperRight)+(currentLowerLeft * -1) + (currentLowerRight);
 
-			GX = abs(GX);
-			GY = abs(GY);
-			int G = GX * GX + GY * GY;
-			G = sqrt(G);
+			int G = abs(GX) + abs(GY);
 
 			if (G >= 50) {
-				sobelEdgeImage[currentPixelPosition] = 100;
+				sobelEdgeImage[currentPixelPosition] = 125;
 			}
 			else {
 				sobelEdgeImage[currentPixelPosition] = 0;
@@ -136,6 +134,11 @@ void SobelEdge(unsigned char* gaussImage, unsigned char* sobelEdgeImage, int Col
 
 		}
 	}
+
+	//auto end = std::chrono::high_resolution_clock::now();
+	//auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+
+	//std::cout << "Elapsed time: " << elapsed << "milliseonds" << std::endl;
 }
 
 void writeToFile(Mat Img) {
@@ -169,9 +172,9 @@ void dummyDataTest() {
 	Mat gaussanFilter(greyImg.rows, greyImg.cols, CV_8UC1);
 	Mat sobelEdgeFilteredImage(greyImg.rows, greyImg.cols, CV_8UC1);
 
-	//gaussianBlur(greyImg.data, gaussanFilter.data, greyImg.cols, greyImg.rows);
-	//image_toGrayScale_Cuda(greyImg.data, greyImg.rows, greyImg.cols, 3, greyImg.data, gaussanFilter.data);
-	//SobelEdge(gaussanFilter.data, sobelEdgeFilteredImage.data, gaussanFilter.cols, gaussanFilter.rows);
+	gaussianBlur(greyImg.data, gaussanFilter.data, greyImg.cols, greyImg.rows);
+	//imageProcessingCUDA(greyImg.data, greyImg.rows, greyImg.cols, 3, greyImg.data, gaussanFilter.data);
+	SobelEdge(gaussanFilter.data, sobelEdgeFilteredImage.data, gaussanFilter.cols, gaussanFilter.rows);
 	for (int y = 0; y < greyImg.rows; y++) {
 		for (int x = 0; x < greyImg.cols; x++) {
 			int number = greyImg.at<uchar>(y, x);
@@ -203,7 +206,7 @@ void dummyDataTest() {
 }
 
 int main() {
-	Mat rgbImage = imread("test.png");
+	Mat rgbImage = imread("test9.jpg");
 	Mat grayImage(rgbImage.rows, rgbImage.cols, CV_8UC1);
 	Mat gaussianFilterImage(rgbImage.rows, rgbImage.cols, CV_8UC1);
 	Mat sobelEdgeFilteredImage(rgbImage.rows, rgbImage.cols, CV_8UC1);
@@ -215,15 +218,24 @@ int main() {
 	else {
 		cout << "Height:" << rgbImage.rows << ", Width: " << rgbImage.cols << ", Channels: " << rgbImage.channels() << endl;
 
-		//rgb2GRAYbasic(rgbImage.data, grayImage.data, rgbImage.cols, rgbImage.rows, rgbImage.channels());
-		//gaussianBlur(grayImage.data, gaussianFilterImage.data, grayImage.cols, grayImage.rows);
-		//SobelEdge(gaussianFilterImage.data, sobelEdgeFilteredImage.data, gaussianFilterImage.cols, gaussianFilterImage.rows);
-		imageProcessingCUDA(rgbImage.data, rgbImage.rows, rgbImage.cols, rgbImage.channels(), grayImage.data, gaussianFilterImage.data, sobelEdgeFilteredImage.data);
+		auto ossz = 0;
+		for (int i = 0; i < 10; i++)
+		{
+			auto begin = std::chrono::high_resolution_clock::now();
+			rgb2GRAYbasic(rgbImage.data, grayImage.data, rgbImage.cols, rgbImage.rows, rgbImage.channels());
+			gaussianBlur(grayImage.data, gaussianFilterImage.data, grayImage.cols, grayImage.rows);
+			SobelEdge(gaussianFilterImage.data, sobelEdgeFilteredImage.data, gaussianFilterImage.cols, gaussianFilterImage.rows);
+			auto end = std::chrono::high_resolution_clock::now();
+			auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+			ossz = ossz + elapsed;
+			std::cout << "Elapsed time: " << elapsed << "milliseonds" << std::endl;
+		}
+		std::cout << (ossz / 10) << std::endl;
+		//imageProcessingCUDA(rgbImage.data, rgbImage.rows, rgbImage.cols, rgbImage.channels(), grayImage.data, gaussianFilterImage.data, sobelEdgeFilteredImage.data);
 		//cout << "Height:" << grayImage.rows << ", Width: " << grayImage.cols << ", Channels: " << grayImage.channels() << endl;
 	}
 	//dummyDataTest();
-
-	writeToFile(sobelEdgeFilteredImage);
+	//writeToFile(sobelEdgeFilteredImage);
 	imwrite("GrayScale.png", grayImage);
 	imwrite("gaussanFiltered_IMG.png", gaussianFilterImage);
 	imwrite("sobelEdge.png", sobelEdgeFilteredImage);
