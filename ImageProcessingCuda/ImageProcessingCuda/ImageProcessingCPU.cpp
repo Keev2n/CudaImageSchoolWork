@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-void rgb2GRAYbasic(Mat img, Mat grayImage) {
+void rgb2GRAYbasic(unsigned char* rgbImage, unsigned char* grayImage, int Col, int Row, int Channels) {
 	int width = img.cols;
 	int height = img.rows;
 	int channels = img.channels();
