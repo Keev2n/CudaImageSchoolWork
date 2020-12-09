@@ -30,7 +30,7 @@ void rgb2GRAYbasic(unsigned char* rgbImage, unsigned char* grayImage, int Col, i
 	//std::cout << "Elapsed time: " << elapsed << "milliseonds" << std::endl;
 }
 
-void gaussianBlur(Mat grayImage, Mat gaussianFilter){
+void gaussianBlur(unsigned char* grayImage, unsigned char* gaussianBlurImage, int Col, int Row){
 	for (int x = 1; x < (grayImage.cols - 1); x++){
 		for (int y = 1; y < (grayImage.rows - 1); y++){
 			int balfelsoertek = grayImage.at<uchar>(y - 1, x - 1);
