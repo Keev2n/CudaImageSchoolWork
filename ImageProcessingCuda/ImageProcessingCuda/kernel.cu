@@ -24,8 +24,8 @@ void imageProcessingCUDA(unsigned char* RGBimage, int Row, int Col, int Channels
 	cudaMalloc((void**)&dev_Image3, Row * Col);
 	cudaMalloc((void**)&dev_Image4, Row * Col);
 
-	cudaMemcpy(dev_Image, Image, Row * Col * Channels, cudaMemcpyHostToDevice);
-	cudaMemcpy(dev_Image2, Image2, Row * Col, cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_Image, RGBimage, Row * Col * Channels, cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_Image2, GrayImage, Row * Col, cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_Image3, GaussFilteredImage, Row * Col, cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_Image4, SobelEdgeImage, Row * Col, cudaMemcpyHostToDevice);
 
@@ -34,14 +34,18 @@ void imageProcessingCUDA(unsigned char* RGBimage, int Row, int Col, int Channels
 	int blockX = (Col / threadNumber) + 1;
 	int blockY = (Row / threadNumber) + 1;
 
-	ImageToGrayScale_CUDA <<< dim3(blockX,blockY), dim3(threadNumber, threadNumber) >> > (dev_Image, Row, Col, Channels, dev_Image2);
-	cout << cudaGetLastError() << endl;
+	ImageToGrayScale_CUDA << < dim3(blockX, blockY), dim3(threadNumber, threadNumber) >> > (dev_Image, Row, Col, Channels, dev_Image2);
+	GaussianFilter_CUDA << < dim3(blockX, blockY), dim3(threadNumber, threadNumber) >> > (dev_Image2, Row, Col, dev_Image3);
+	SobelEdge_CUDA << < dim3(blockX, blockY), dim3(threadNumber, threadNumber) >> > (dev_Image3, dev_Image4, Col, Row);
 
-	cudaMemcpy(Image, dev_Image, Row * Col * Channels, cudaMemcpyDeviceToHost);
-	cudaMemcpy(Image2, dev_Image2, Row * Col, cudaMemcpyDeviceToHost);
+	cudaMemcpy(RGBimage, dev_Image, Row * Col * Channels, cudaMemcpyDeviceToHost);
+	cudaMemcpy(GrayImage, dev_Image2, Row * Col, cudaMemcpyDeviceToHost);
+	cudaMemcpy(GaussFilteredImage, dev_Image3, Row * Col, cudaMemcpyDeviceToHost);
+	cudaMemcpy(SobelEdgeImage, dev_Image4, Row * Col, cudaMemcpyDeviceToHost);
 
-	cudaFree(Image);
-	cudaFree(Image2);
+	cudaFree(RGBimage);
+	cudaFree(GrayImage);
+	cudaFree(GaussFilteredImage);
 }
 
 __global__ void ImageToGrayScale_CUDA(unsigned char* RGBimage, int Row, int Col, int Channels, unsigned char* GrayImage) {
