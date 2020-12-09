@@ -13,7 +13,7 @@ __global__ void GaussianFilter_CUDA(unsigned char* GrayImage, int Row, int Col, 
 __global__ void SobelEdge_CUDA(unsigned char* gaussImage, unsigned char* sobelEdgeImage, int Col, int Row);
 
 
-void imageProcessingCUDA(unsigned char* Image, int Row, int Col, int Channels, unsigned char* Image2) {
+void imageProcessingCUDA(unsigned char* RGBimage, int Row, int Col, int Channels, unsigned char* GrayImage, unsigned char* GaussFilteredImage, unsigned char* SobelEdgeImage) {
 	unsigned char* dev_Image = NULL;
 	unsigned char* dev_Image2 = NULL;
 	unsigned char* dev_Image3 = NULL;
