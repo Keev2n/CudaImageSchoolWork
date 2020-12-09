@@ -14,38 +14,58 @@ __global__ void SobelEdge_CUDA(unsigned char* gaussImage, unsigned char* sobelEd
 
 
 void imageProcessingCUDA(unsigned char* RGBimage, int Row, int Col, int Channels, unsigned char* GrayImage, unsigned char* GaussFilteredImage, unsigned char* SobelEdgeImage) {
-	unsigned char* dev_Image = NULL;
-	unsigned char* dev_Image2 = NULL;
-	unsigned char* dev_Image3 = NULL;
-	unsigned char* dev_Image4 = NULL;
+	cudaEvent_t start, stop;
+	cudaEventCreate(&start);
+	cudaEventCreate(&stop);
 
-	cudaMalloc((void**)&dev_Image, Row * Col * Channels);
-	cudaMalloc((void**)&dev_Image2, Row * Col);
-	cudaMalloc((void**)&dev_Image3, Row * Col);
-	cudaMalloc((void**)&dev_Image4, Row * Col);
+	float sum = 0;
+	for (int i = 0; i < 10; i++) {
+		unsigned char* dev_Image = NULL;
+		unsigned char* dev_Image2 = NULL;
+		unsigned char* dev_Image3 = NULL;
+		unsigned char* dev_Image4 = NULL;
 
-	cudaMemcpy(dev_Image, RGBimage, Row * Col * Channels, cudaMemcpyHostToDevice);
-	cudaMemcpy(dev_Image2, GrayImage, Row * Col, cudaMemcpyHostToDevice);
-	cudaMemcpy(dev_Image3, GaussFilteredImage, Row * Col, cudaMemcpyHostToDevice);
-	cudaMemcpy(dev_Image4, SobelEdgeImage, Row * Col, cudaMemcpyHostToDevice);
+		cudaMalloc((void**)&dev_Image, Row * Col * Channels);
+		cudaMalloc((void**)&dev_Image2, Row * Col);
+		cudaMalloc((void**)&dev_Image3, Row * Col);
+		cudaMalloc((void**)&dev_Image4, Row * Col);
 
-	int threadNumber = 16;
+		cudaEventRecord(start);
 
-	int blockX = (Col / threadNumber) + 1;
-	int blockY = (Row / threadNumber) + 1;
+		cudaMemcpy(dev_Image, RGBimage, Row * Col * Channels, cudaMemcpyHostToDevice);
+		cudaMemcpy(dev_Image2, GrayImage, Row * Col, cudaMemcpyHostToDevice);
+		cudaMemcpy(dev_Image3, GaussFilteredImage, Row * Col, cudaMemcpyHostToDevice);
+		cudaMemcpy(dev_Image4, SobelEdgeImage, Row * Col, cudaMemcpyHostToDevice);
 
-	ImageToGrayScale_CUDA << < dim3(blockX, blockY), dim3(threadNumber, threadNumber) >> > (dev_Image, Row, Col, Channels, dev_Image2);
-	GaussianFilter_CUDA << < dim3(blockX, blockY), dim3(threadNumber, threadNumber) >> > (dev_Image2, Row, Col, dev_Image3);
-	SobelEdge_CUDA << < dim3(blockX, blockY), dim3(threadNumber, threadNumber) >> > (dev_Image3, dev_Image4, Col, Row);
+		int threadNumber = 16;
 
-	cudaMemcpy(RGBimage, dev_Image, Row * Col * Channels, cudaMemcpyDeviceToHost);
-	cudaMemcpy(GrayImage, dev_Image2, Row * Col, cudaMemcpyDeviceToHost);
-	cudaMemcpy(GaussFilteredImage, dev_Image3, Row * Col, cudaMemcpyDeviceToHost);
-	cudaMemcpy(SobelEdgeImage, dev_Image4, Row * Col, cudaMemcpyDeviceToHost);
+		int blockX = (Col / threadNumber) + 1;
+		int blockY = (Row / threadNumber) + 1;
 
-	cudaFree(RGBimage);
-	cudaFree(GrayImage);
-	cudaFree(GaussFilteredImage);
+		ImageToGrayScale_CUDA << < dim3(blockX, blockY), dim3(threadNumber, threadNumber) >> > (dev_Image, Row, Col, Channels, dev_Image2);
+		GaussianFilter_CUDA << < dim3(blockX, blockY), dim3(threadNumber, threadNumber) >> > (dev_Image2, Row, Col, dev_Image3);
+		SobelEdge_CUDA << < dim3(blockX, blockY), dim3(threadNumber, threadNumber) >> > (dev_Image3, dev_Image4, Col, Row);
+
+		//GaussianFilter_CUDA << < 1, dim3(2,2) >> > (dev_Image2, Row, Col, dev_Image3);
+
+		cudaMemcpy(RGBimage, dev_Image, Row * Col * Channels, cudaMemcpyDeviceToHost);
+		cudaMemcpy(GrayImage, dev_Image2, Row * Col, cudaMemcpyDeviceToHost);
+		cudaMemcpy(GaussFilteredImage, dev_Image3, Row * Col, cudaMemcpyDeviceToHost);
+		cudaMemcpy(SobelEdgeImage, dev_Image4, Row * Col, cudaMemcpyDeviceToHost);
+
+		cudaEventRecord(stop);
+
+		cudaEventSynchronize(stop);
+		float milliseconds = 0;
+		cudaEventElapsedTime(&milliseconds, start, stop);
+		printf("Elapsed time:%f Thread number: %d\n", milliseconds, threadNumber);
+
+		cudaFree(RGBimage);
+		cudaFree(GrayImage);
+		cudaFree(GaussFilteredImage);
+		sum = sum + milliseconds;
+	}
+	std::cout << (sum / 10) << std::endl;
 }
 
 __global__ void ImageToGrayScale_CUDA(unsigned char* RGBimage, int Row, int Col, int Channels, unsigned char* GrayImage) {
