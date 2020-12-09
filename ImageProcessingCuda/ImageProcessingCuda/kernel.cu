@@ -26,6 +26,8 @@ void imageProcessingCUDA(unsigned char* Image, int Row, int Col, int Channels, u
 
 	cudaMemcpy(dev_Image, Image, Row * Col * Channels, cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_Image2, Image2, Row * Col, cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_Image3, GaussFilteredImage, Row * Col, cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_Image4, SobelEdgeImage, Row * Col, cudaMemcpyHostToDevice);
 
 	int threadNumber = 16;
 
