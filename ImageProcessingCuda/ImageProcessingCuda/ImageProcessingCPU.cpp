@@ -220,11 +220,11 @@ int main() {
 		//rgb2GRAYbasic(rgbImage.data, grayImage.data, rgbImage.cols, rgbImage.rows, rgbImage.channels());
 		//gaussianBlur(grayImage.data, gaussianFilterImage.data, grayImage.cols, grayImage.rows);
 		//SobelEdge(gaussianFilterImage.data, sobelEdgeFilteredImage.data, gaussianFilterImage.cols, gaussianFilterImage.rows);
-		//imageProcessingCUDA(rgbImage.data, rgbImage.rows, rgbImage.cols, rgbImage.channels(), grayImage.data, gaussianFilterImage.data, sobelEdgeFilteredImage.data);
+		imageProcessingCUDA(rgbImage.data, rgbImage.rows, rgbImage.cols, rgbImage.channels(), grayImage.data, gaussianFilterImage.data, sobelEdgeFilteredImage.data);
 		//cout << "Height:" << grayImage.rows << ", Width: " << grayImage.cols << ", Channels: " << grayImage.channels() << endl;
 	}
 	//dummyDataTest();
-	//writeToFile(sobelEdgeFilteredImage);
+	//writeToFile(grayImage);
 	imwrite("GrayScale.png", grayImage);
 	imwrite("gaussanFiltered_IMG.png", gaussianFilterImage);
 	imwrite("sobelEdge.png", sobelEdgeFilteredImage);
