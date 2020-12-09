@@ -1,0 +1,1 @@
+void imageProcessingCUDA(unsigned char* RGBimage, int Row, int Col, int Channels, unsigned char* GrayImage, unsigned char* GaussFilteredImage, unsigned char* SobelEdgeImage);
