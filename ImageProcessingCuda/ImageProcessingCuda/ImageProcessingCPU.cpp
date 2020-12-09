@@ -9,7 +9,7 @@
 using namespace std;
 using namespace cv;
 
-void Teszt(Mat img, Mat grayImage) {
+void rgb2GRAYbasic(Mat img, Mat grayImage) {
 	int width = img.cols;
 	int height = img.rows;
 	int channels = img.channels();
