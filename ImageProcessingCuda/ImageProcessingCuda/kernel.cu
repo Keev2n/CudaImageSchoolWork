@@ -38,7 +38,7 @@ void image_toGrayScale_Cuda(unsigned char* Image, int Row, int Col, int Channels
 	cudaFree(Image2);
 }
 
-__global__ void ImageToGrayScale_CUDA(unsigned char* Image, int Row, int Col, int Channels, unsigned char* Image2) {
+__global__ void ImageToGrayScale_CUDA(unsigned char* RGBimage, int Row, int Col, int Channels, unsigned char* GrayImage) {
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	int y = threadIdx.y + blockIdx.y * blockDim.y;
 
@@ -46,12 +46,11 @@ __global__ void ImageToGrayScale_CUDA(unsigned char* Image, int Row, int Col, in
 		int grayOffset = y * Col + x;
 		int rgbOffset = grayOffset * Channels;
 
-		unsigned char b = Image[rgbOffset];
-		unsigned char g = Image[rgbOffset + 1]; 
-		unsigned char r = Image[rgbOffset + 2];
+		unsigned char b = RGBimage[rgbOffset];
+		unsigned char g = RGBimage[rgbOffset + 1];
+		unsigned char r = RGBimage[rgbOffset + 2];
 
-
-		Image2[grayOffset] = 0.21f * r + 0.71f * g + 0.07f * b;
+		GrayImage[grayOffset] = 0.299f * r + 0.587f * g + 0.114f * b;
 	}
 }
 
