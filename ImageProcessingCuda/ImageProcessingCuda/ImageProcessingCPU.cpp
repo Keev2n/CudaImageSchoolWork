@@ -150,6 +150,58 @@ void writeToFile(Mat Img) {
 	myfile.close();
 }
 
+void dummyDataTest() {
+	uint8_t greyArr[11][12] = {
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+		{ 0, 25, 50, 75, 100, 125, 150, 175, 200, 225, 255, 10 },
+	};
+
+	Mat greyImg = cv::Mat(11, 12, CV_8UC1, &greyArr);
+	Mat gaussanFilter(greyImg.rows, greyImg.cols, CV_8UC1);
+	Mat sobelEdgeFilteredImage(greyImg.rows, greyImg.cols, CV_8UC1);
+
+	//gaussianBlur(greyImg.data, gaussanFilter.data, greyImg.cols, greyImg.rows);
+	//image_toGrayScale_Cuda(greyImg.data, greyImg.rows, greyImg.cols, 3, greyImg.data, gaussanFilter.data);
+	//SobelEdge(gaussanFilter.data, sobelEdgeFilteredImage.data, gaussanFilter.cols, gaussanFilter.rows);
+	for (int y = 0; y < greyImg.rows; y++) {
+		for (int x = 0; x < greyImg.cols; x++) {
+			int number = greyImg.at<uchar>(y, x);
+			std::cout << number << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	std::cout << "****************************************" << std::endl;
+	for (int y = 0; y < gaussanFilter.rows; y++) {
+		for (int x = 0; x < gaussanFilter.cols; x++) {
+			int number = gaussanFilter.at<uchar>(y, x);
+			std::cout << number << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	std::cout << "****************************************" << std::endl;
+	for (int y = 0; y < sobelEdgeFilteredImage.rows; y++) {
+		for (int x = 0; x < sobelEdgeFilteredImage.cols; x++) {
+			int number = sobelEdgeFilteredImage.at<uchar>(y, x);
+			std::cout << number << " ";
+		}
+		std::cout << std::endl;
+	}
+
+	//writeToFile(greyImg, gaussanFilter);
+
+}
+
 int main() {
 	Mat img = imread("test7.png");
 	Mat grayImage(img.rows, img.cols, CV_8UC1);
